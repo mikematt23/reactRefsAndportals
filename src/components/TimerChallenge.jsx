@@ -1,6 +1,7 @@
 
 
 import { useState, useRef } from "react"
+import ResultModel from "./ResultModel"
 
 const TimerChallenge = (props)=>{
 
@@ -26,9 +27,10 @@ const TimerChallenge = (props)=>{
 
 
   return (
+    <>
+    {timerExpired && <ResultModel targetTime={props.targetTime} result ="Lost"/>}
     <section className="challenge">
       <h2>{props.title}</h2>
-      {timerExpired && <p>You Lose!</p>}
       <p className="challenge-time">
         {props.targetTime}
       </p>
@@ -39,6 +41,7 @@ const TimerChallenge = (props)=>{
         {timerStarted ? "Time is running...": "Timer Not Active"}
       </p>
     </section>
+    </>
   )
 }
 
