@@ -6,39 +6,47 @@ import ResultModel from "./ResultModel"
 const TimerChallenge = (props)=>{
 
   const timer = useRef()
+  const dialog = useRef()
 
-  const [timerStarted,setTimerStarted] =useState(false)
-  const [timerExpired,setTimerExpired] = useState(false)
+const [timeRemaining, setTimeRemaining] = useState(props.targetTime*1000)
+
+const timerIsActive = timeRemaining > 0 && timeRemaining < props.targetTime*1000
   
+if(timeRemaining <= 0){
+  clearInterval(timer.current)
+  dialog.current.open()
+}
+
+function handleReset(){
+  setTimeRemaining(props.targetTime*1000)
+}
 
  const handleStart = ()=>{
-  timer.current = setTimeout(()=>{
-    setTimerExpired(true)
-    setTimerStarted(false)
-  },props.targetTime*1000)
-  setTimerStarted(true)
+  timer.current = setInterval(()=>{
+    setTimeRemaining(prevTimeReaming => prevTimeReaming-10)
+  },10)
+
  }
 
  const handleStop = ()=>{
-  console.log(timer)
-  clearTimeout(timer.current)
-  setTimerStarted(false)
+  dialog.current.open()
+  clearInterval(timer.current)
  }
 
 
   return (
     <>
-    {timerExpired && <ResultModel targetTime={props.targetTime} result ="Lost"/>}
+    <ResultModel handleReset={handleReset} ref={dialog} targetTime={props.targetTime} remainingTime ={timeRemaining}/>
     <section className="challenge">
       <h2>{props.title}</h2>
       <p className="challenge-time">
         {props.targetTime}
       </p>
       <p>
-        <button onClick={timerStarted ? handleStop : handleStart}>{timerStarted ? "Stop timer": "Start Timer"}</button>
+        <button onClick={timerIsActive ? handleStop : handleStart}>{timerIsActive ? "Stop timer": "Start Timer"}</button>
       </p>
-      <p className={timerStarted ? "active" : undefined}>
-        {timerStarted ? "Time is running...": "Timer Not Active"}
+      <p className={timerIsActive ? "active" : undefined}>
+        {timerIsActive ? "Time is running...": "Timer Not Active"}
       </p>
     </section>
     </>
